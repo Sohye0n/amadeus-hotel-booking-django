@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
 
-    steps:
+    steps:      
     - name: Deploy to EC2 via SSH
       uses: appleboy/ssh-action@v1.0.0
       with:
@@ -42,7 +42,13 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
         script: |
+          echo "AMADEUS_CLIENT_ID=${AMADEUS_CLIENT_ID}" > ~/hotel-booking.env
+          echo "AMADEUS_CLIENT_SECRET=${AMADEUS_CLIENT_SECRET}" >> ~/hotel-booking.env
           docker pull ${{ secrets.DOCKER_USERNAME }}/amadeushotelbookingdjango:${{ github.sha }}
           docker stop hotel-booking || true
           docker rm hotel-booking || true
-          docker run -d --name hotel-booking -p 80:8000 ${{ secrets.DOCKER_USERNAME }}/amadeushotelbookingdjango:${{ github.sha }}
+          docker run -d \
+            --name hotel-booking \
+            --env-file ~/hotel-booking.env \
+            -p 80:8000 \
+            ${{ secrets.DOCKER_USERNAME }}/amadeushotelbookingdjango:${{ github.sha }}
