@@ -44,7 +44,7 @@ jobs:
         script: |
           echo "AMADEUS_CLIENT_ID=${{secrets.AMADEUS_CLIENT_ID}}" > ~/hotel-booking.env
           echo "AMADEUS_CLIENT_SECRET=${{secrets.AMADEUS_CLIENT_SECRET}}" >> ~/hotel-booking.env
-          echo "HOST_URL=${{secret.HOST_URL}}" >> ~/hotel-booking.env
+          echo "HOST_URL=${{secrets.HOST_URL}}" >> ~/hotel-booking.env
           docker pull ${{ secrets.DOCKER_USERNAME }}/amadeushotelbookingdjango:${{ github.sha }}
           docker stop hotel-booking || true
           docker rm hotel-booking || true
